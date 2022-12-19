@@ -14,8 +14,8 @@ export class ContactForm extends Component {
     event.preventDefault();
     const client = {
       id: nanoid(),
-      clientName: this.state.name,
-      clientNumber: this.state.number,
+      name: this.state.name,
+      number: this.state.number,
     };
     this.props.pushToContact(client);
     this.setState({ name: '', number: '' });

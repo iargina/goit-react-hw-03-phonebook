@@ -8,20 +8,16 @@ export class App extends Component {
     contacts: [],
     filter: '',
   };
-  deleteClient(ev) {
-    const clientID = ev.currentTarget.parentElement.id;
-    this.setState({
-      contacts: this.state.contacts.filter(el => el.id !== clientID),
-    });
-    return;
+  deleteClient(id) {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(el => el.id !== id),
+    }));
   }
 
   pushToContact(client) {
-    const result = this.state.contacts.find(
-      el => el.clientName === client.clientName
-    );
+    const result = this.state.contacts.find(el => el.name === client.name);
     if (result) {
-      alert(`${client.clientName} is already in your contact list`);
+      alert(`${client.name} is already in your contact list`);
       return;
     }
     this.setState(prevState => {
@@ -30,6 +26,12 @@ export class App extends Component {
       };
     });
   }
+  filterContact = () => {
+    const { contacts, filter } = this.state;
+    return contacts.filter(el =>
+      el.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
 
   renderOnChange(ev) {
     const stateOption = ev.currentTarget.name;
@@ -37,7 +39,7 @@ export class App extends Component {
     return;
   }
   render() {
-    console.log(this.props);
+    const filteredContact = this.filterContact();
     return (
       <div
         style={{
@@ -59,7 +61,7 @@ export class App extends Component {
         <ContactList
           stateFilter={this.state.filter}
           deleteClient={this.deleteClient.bind(this)}
-          contacts={this.state.contacts}
+          contacts={filteredContact}
         />
       </div>
     );

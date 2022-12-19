@@ -4,21 +4,36 @@ import PropTypes from 'prop-types';
 
 export class ContactList extends Component {
   render() {
+    const { contacts, deleteClient } = this.props;
     return (
       <ul className={css.list}>
-        {this.props.stateFilter
+        {contacts.map(el => {
+          return (
+            <li key={el.id} className={css.listItem}>
+              {el.name}: {el.number}
+              <button
+                type="button"
+                className={css.deleteButton}
+                onClick={() => deleteClient(el.id)}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+        {/*  {this.props.stateFilter
           ? this.props.contacts.map(el => {
               if (
-                el.clientName
+                el.name
                   .toLowerCase()
                   .includes(this.props.stateFilter.toLowerCase())
               ) {
                 return (
                   <li key={el.id} id={el.id} className={css.listItem}>
-                    {el.clientName}: {el.clientNumber}
+                    {el.name}: {el.number}
                     <button
                       type="button"
-                      onClick={this.props.deleteClient}
+                      onClick={() => this.props.deleteClient(el.id)}
                       className={css.deleteButton}
                     >
                       Delete
@@ -31,7 +46,7 @@ export class ContactList extends Component {
           : this.props.contacts.map(el => {
               return (
                 <li key={el.id} id={el.id} className={css.listItem}>
-                  {el.clientName}: {el.clientNumber}
+                  {el.name}: {el.number}
                   <button
                     type="button"
                     className={css.deleteButton}
@@ -41,7 +56,7 @@ export class ContactList extends Component {
                   </button>
                 </li>
               );
-            })}
+            })} */}
       </ul>
     );
   }
@@ -51,8 +66,8 @@ ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      clientName: PropTypes.string.isRequired,
-      clientNumber: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
     }).isRequired
   ).isRequired,
 };
