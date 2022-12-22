@@ -2,30 +2,45 @@ import React, { Component } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactList/ContactList';
+import { nanoid } from 'nanoid';
 
 export class App extends Component {
   state = {
     contacts: [],
     filter: '',
   };
-  deleteClient(id) {
+  deleteClient = id => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(el => el.id !== id),
     }));
-  }
-
-  pushToContact(client) {
-    const result = this.state.contacts.find(el => el.name === client.name);
+  };
+  componentDidMount = () => {
+    const data = localStorage.getItem('contacts');
+    if (!data) {
+      return;
+    }
+    this.setState({ contacts: JSON.parse(data) });
+  };
+  componentDidUpdate = (_, prevState) => {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  };
+  pushToContact = client => {
+    const result = this.state.contacts.find(
+      el => el.name.toLowerCase() === client.name.toLowerCase()
+    );
     if (result) {
       alert(`${client.name} is already in your contact list`);
       return;
     }
     this.setState(prevState => {
+      const newClient = { id: nanoid(), ...client };
       return {
-        contacts: [client, ...prevState.contacts],
+        contacts: [newClient, ...prevState.contacts],
       };
     });
-  }
+  };
   filterContact = () => {
     const { contacts, filter } = this.state;
     return contacts.filter(el =>
@@ -33,11 +48,11 @@ export class App extends Component {
     );
   };
 
-  renderOnChange(ev) {
+  renderOnChange = ev => {
     const stateOption = ev.currentTarget.name;
     this.setState({ [stateOption]: ev.currentTarget.value });
     return;
-  }
+  };
   render() {
     const filteredContact = this.filterContact();
     return (
@@ -54,15 +69,21 @@ export class App extends Component {
         <h2 className="formTitle">PhoneBook</h2>
         <ContactForm pushToContact={this.pushToContact.bind(this)} />
         <h2 className="contactListTitle">Contacts</h2>
-        <Filter
-          renderOnChange={this.renderOnChange.bind(this)}
-          stateFilter={this.state.filter}
-        />
-        <ContactList
-          stateFilter={this.state.filter}
-          deleteClient={this.deleteClient.bind(this)}
-          contacts={filteredContact}
-        />
+        {this.state.contacts.length > 0 ? (
+          <>
+            <Filter
+              renderOnChange={this.renderOnChange.bind(this)}
+              stateFilter={this.state.filter}
+            />
+            <ContactList
+              stateFilter={this.state.filter}
+              deleteClient={this.deleteClient.bind(this)}
+              contacts={filteredContact}
+            />
+          </>
+        ) : (
+          <p>Your have no contacts in your phone book</p>
+        )}
       </div>
     );
   }

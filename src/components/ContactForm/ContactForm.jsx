@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import css from './ContactForm.module.css';
-import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
 export class ContactForm extends Component {
@@ -13,7 +12,6 @@ export class ContactForm extends Component {
   onSubmit(event) {
     event.preventDefault();
     const client = {
-      id: nanoid(),
       name: this.state.name,
       number: this.state.number,
     };
